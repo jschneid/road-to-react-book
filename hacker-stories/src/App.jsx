@@ -30,31 +30,25 @@ const list = [
   }
 ];
 
-function App() {
-  return (
-    <div>
-      <h1>My Hackier<sub>[sic]</sub> Stories</h1>
-      <Search />
-      <hr />
-      Some titles are: 
-      <List />
-    </div>
-  )
-}
+const App = () => (
+  <div>
+    <h1>My Hackier<sub>[sic]</sub> Stories</h1>
+    <Search />
+    <hr />
+    Some titles are: 
+    <List />
+  </div>
+);
 
-function Search() {
-  return (
-    <div>
-      <label htmlFor="search">Search: </label>
-      <input id="search" type="text"></input>
-    </div>
-  )
+const Search = () => (
+  <div>
+    <label htmlFor="search">Search: </label>
+    <input id="search" type="text"></input>
+  </div>
+);
 
-}
-
-function List() {
-  return (
-    <ul>
+const List = () => (
+  <ul>
     {list.map((listItem) => 
       <li key={listItem.objectID}>
         <a href={listItem.url}>{listItem.title}</a>
@@ -78,8 +72,6 @@ function List() {
       )
     }
   </ul>
-  )
-
-}
+);
 
 export default App;
