@@ -4,6 +4,8 @@ import viteLogo from '/vite.svg';
 import './App.css';
 
 const App = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
   const stories = [
     {
       title: 'React', 
@@ -32,9 +34,11 @@ const App = () => {
   ];
 
   const handleSearch = (event) => {
-    console.log("App.handleSearch(): " + event.target.value);
+    setSearchTerm(event.target.value);
   };
-  
+
+  const storiesMatchingSearchTerm = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    
   return (
   <div>
     <h1>My Hackier<sub>[sic]</sub> Stories</h1>
@@ -47,17 +51,13 @@ const App = () => {
     <Search onSearch={handleSearch} />
     <hr />
     Some titles are: 
-    <List list={stories} />
+    <List list={storiesMatchingSearchTerm} />
   </div>
   );
 };
 
 const Search = (props) => {
-  const [searchTerm, setSearchTerm] = useState('');
-
   const handleChange = (event) => {
-    setSearchTerm(event.target.value);
-
     props.onSearch(event);
   }
 
@@ -65,9 +65,6 @@ const Search = (props) => {
   <div>
     <label htmlFor="search">Search: </label>
     <input id="search" type="text" onChange={handleChange}></input>
-    <p>
-      Your search term is: <strong>{searchTerm}</strong>
-    </p>
   </div>
   );
 };
