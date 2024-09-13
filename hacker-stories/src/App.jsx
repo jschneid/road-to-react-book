@@ -30,6 +30,10 @@ const App = () => {
       objectID: 2
     }
   ];
+
+  const handleSearch = (event) => {
+    console.log("App.handleSearch(): " + event.target.value);
+  };
   
   return (
   <div>
@@ -40,7 +44,7 @@ const App = () => {
     <p>
       <code>npm run dev</code>
     </p>
-    <Search />
+    <Search onSearch={handleSearch} />
     <hr />
     Some titles are: 
     <List list={stories} />
@@ -48,11 +52,13 @@ const App = () => {
   );
 };
 
-const Search = () => {
+const Search = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
+
+    props.onSearch(event);
   }
 
   return (
