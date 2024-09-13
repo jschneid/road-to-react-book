@@ -33,6 +33,12 @@ const list = [
 const App = () => (
   <div>
     <h1>My Hackier<sub>[sic]</sub> Stories</h1>
+    <p>
+      To run this, from the hacker-stories directory, run:
+    </p>
+    <p>
+      <code>npm run dev</code>
+    </p>
     <Search />
     <hr />
     Some titles are: 
@@ -40,12 +46,19 @@ const App = () => (
   </div>
 );
 
-const Search = () => (
+const Search = () => {
+  const handleChange = (event) => {
+    console.log(event);
+    console.log(event.target.value);
+  }
+
+  return (
   <div>
     <label htmlFor="search">Search: </label>
-    <input id="search" type="text"></input>
+    <input id="search" type="text" onChange={handleChange}></input>
   </div>
-);
+  );
+};
 
 const List = () => (
   <ul>
