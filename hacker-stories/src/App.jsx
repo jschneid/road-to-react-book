@@ -4,7 +4,7 @@ import viteLogo from '/vite.svg';
 import './App.css';
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('React');
 
   const stories = [
     {
@@ -42,13 +42,8 @@ const App = () => {
   return (
   <div>
     <h1>My Hackier<sub>[sic]</sub> Stories</h1>
-    <p>
-      To run this, from the hacker-stories directory, run:
-    </p>
-    <p>
-      <code>npm run dev</code>
-    </p>
-    <Search onSearch={handleSearch} />
+
+    <Search onSearch={handleSearch} searchTerm={searchTerm} />
     <hr />
     Some titles are: 
     <List list={storiesMatchingSearchTerm} />
@@ -64,7 +59,7 @@ const Search = (props) => {
   return (
   <div>
     <label htmlFor="search">Search: </label>
-    <input id="search" type="text" onChange={handleChange}></input>
+    <input id="search" type="text" value={props.searchTerm} onChange={handleChange}></input>
   </div>
   );
 };
