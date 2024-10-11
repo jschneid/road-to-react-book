@@ -51,53 +51,47 @@ const App = () => {
   );
 };
 
-const Search = (props) => {
-  const handleChange = (event) => {
-    props.onSearch(event);
-  }
-
-  return (
+const Search = ({searchTerm, onSearch}) => (
   <div>
     <label htmlFor="search">Search: </label>
-    <input id="search" type="text" value={props.searchTerm} onChange={handleChange}></input>
+    <input id="search" type="text" value={searchTerm} onChange={onSearch}></input>
   </div>
-  );
-};
+);
 
-const List = (props) => (
+const List = ({list}) => (
   <ul>
-    {props.list.map((listItem) => (
+    {list.map((listItem) => (
       <Item key={listItem.objectID} listItem={listItem} />
     ))}
   </ul>
 );
 
-const Item = (props) => (
+const Item = ({listItem}) => (
   <li>
   <table>
    <thead>
       <tr>
         <th colSpan={2}>
-          <a href={props.listItem.url}>{props.listItem.title}</a>
+          <a href={listItem.url}>{listItem.title}</a>
         </th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <th>Author</th>
-        <td>{props.listItem.author}</td>
+        <td>{listItem.author}</td>
       </tr>
       <tr>
         <th># Comments</th>
-        <td>{props.listItem.num_comments}</td>
+        <td>{listItem.num_comments}</td>
       </tr>
       <tr>
         <th>Points</th>
-        <td>{props.listItem.points}</td>
+        <td>{listItem.points}</td>
       </tr>
     </tbody>
   </table>
 </li>
-)
+);
 
 export default App;
