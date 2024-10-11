@@ -4,7 +4,9 @@ import viteLogo from '/vite.svg';
 import './App.css';
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState('React');
+  const [searchTerm, setSearchTerm] = useState(
+    localStorage.getItem('search') || 'React'
+  );
 
   const stories = [
     {
@@ -35,6 +37,8 @@ const App = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+
+    localStorage.setItem('search', event.target.value);
   };
 
   const storiesMatchingSearchTerm = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
