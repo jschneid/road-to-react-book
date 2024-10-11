@@ -1,8 +1,25 @@
-# React + Vite
+This repository has my code from the exercises in the book 
+<a href="https://www.roadtoreact.com/">The Road to React</a> (2024 edition) by Robin Wieruch.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## Setup 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Command line commands (to be run from this `hacker-stories` directory):
+
+### Run the application for local development
+
+```
+npm run dev
+```
+
+### Run the linter
+
+```
+npm run lint
+```
+
+### Build the app for production
+
+```
+npm run build
+```
