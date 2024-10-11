@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
@@ -7,6 +7,10 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState(
     localStorage.getItem('search') || 'React'
   );
+
+  useEffect(() => {
+    localStorage.setItem('search', searchTerm);
+  }, [searchTerm]);
 
   const stories = [
     {
@@ -37,8 +41,6 @@ const App = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-
-    localStorage.setItem('search', event.target.value);
   };
 
   const storiesMatchingSearchTerm = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
