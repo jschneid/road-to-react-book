@@ -16,13 +16,7 @@ const useStorageState = (key, initialState) => {
 };
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
-
-  useEffect(() => {
-    localStorage.setItem('search', searchTerm);
-  }, [searchTerm]);
-
-  const stories = [
+  const initialStories = [
     {
       title: 'React', 
       url: 'https://reactjs.org/',
@@ -49,12 +43,24 @@ const App = () => {
     }
   ];
 
+  const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
+  const [stories, setStories] = useState(initialStories);
+
+  useEffect(() => {
+    localStorage.setItem('search', searchTerm);
+  }, [searchTerm]);
+
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const storiesMatchingSearchTerm = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+  
+  const handleRemoveStory = (item) => {
+    const updatedStoriesList = stories.filter((story) => item.objectID !== story.objectID);
+    setStories(updatedStoriesList);
+  }
+
   return (
   <div>
     <h1>My Hackier<sub>[sic]</sub> Stories</h1>
@@ -64,7 +70,7 @@ const App = () => {
     </InputWithLabel>
     <hr />
     Some titles are: 
-    <List list={storiesMatchingSearchTerm} />
+    <List list={storiesMatchingSearchTerm} onRemoveItem={handleRemoveStory} />
   </div>
   );
 };
@@ -91,20 +97,20 @@ const InputWithLabel = ({
   </>
 );
 
-const List = ({list}) => (
+const List = ({list, onRemoveItem}) => (
   <ul>
     {list.map((listItem) => (
-      <Item key={listItem.objectID} listItem={listItem} />
+      <Item key={listItem.objectID} listItem={listItem} onRemoveItem={onRemoveItem} />
     ))}
   </ul>
 );
 
-const Item = ({listItem}) => (
+const Item = ({listItem, onRemoveItem}) => (
   <li>
   <table>
    <thead>
       <tr>
-        <th colSpan={2}>
+        <th colSpan={3}>
           <a href={listItem.url}>{listItem.title}</a>
         </th>
       </tr>
@@ -113,6 +119,7 @@ const Item = ({listItem}) => (
       <tr>
         <th>Author</th>
         <td>{listItem.author}</td>
+        <td><input type="button" value="🔥 BURNINATE" onClick={() => onRemoveItem(listItem)} /></td>
       </tr>
       <tr>
         <th># Comments</th>
