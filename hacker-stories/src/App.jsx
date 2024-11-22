@@ -43,17 +43,25 @@ const App = () => {
     }
   ];
 
-  const getAsyncStories = () => new Promise((resolve) => 
-    setTimeout(() => resolve({data: { stories: initialStories } }), 1500)
-  );
-
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [stories, setStories] = useState([]);
+  const [isLoading, setIsLoading] = useState(null);
+  const [errorOccurred, setErrorOccurred] = useState(false);
+
+  const getAsyncStories = () => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { stories: initialStories } }), 1500));
+  };
 
   useEffect(() => {
+    setIsLoading(true);
+
     getAsyncStories().then((result) => {
       setStories(result.data.stories);
+      setIsLoading(false);
+    }).catch(() => {
+      setErrorOccurred(true);
     });
+
   }, []);
 
   useEffect(() => {
@@ -79,8 +87,17 @@ const App = () => {
       <strong>Search:</strong>
     </InputWithLabel>
     <hr />
-    Some titles are: 
-    <List list={storiesMatchingSearchTerm} onRemoveItem={handleRemoveStory} />
+
+    {errorOccurred && <p>ERROR: AN ERROR OCCURRED.</p>}
+
+    {isLoading ? (
+      <p>NOW LOADING STORIES. PLEASE STAND BY...</p>
+    ) : (
+      <>
+        Some titles are: 
+        <List list={storiesMatchingSearchTerm} onRemoveItem={handleRemoveStory} />
+      </>
+    )}
   </div>
   );
 };
