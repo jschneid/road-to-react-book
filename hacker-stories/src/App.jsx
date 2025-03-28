@@ -42,18 +42,20 @@ const initialStories = [
   }
 ];
 
-const getAsyncStories = () => 
-  new Promise((resolve, reject) => setTimeout(reject, 2000));
-// {
-//  return new Promise((resolve) => setTimeout(() => resolve({ data: { stories: initialStories } }), 1500));
-// };
+const getAsyncStories = () => {
+ return new Promise((resolve) => setTimeout(() => resolve({ data: { stories: initialStories } }), 1500));
+};
 
 const storiesReducer = (state, action) => { 
-  switch(action.type) {
-    case 'SET_STORIES':
-      return action.payload;
+  switch (action.type) {
+    case 'STORIES_FETCH_INIT':
+      return { ...state, isLoading: true, errorOccurred: false };
+    case 'STORIES_FETCH_SUCCESS':
+      return { ...state, isLoading: false, errorOccurred: false, data: action.payload };
+    case 'STORIES_FETCH_FAILURE':
+      return { ...state, isLoading: false, errorOccurred: true };
     case 'REMOVE_STORY':
-      return state.filter((story) => action.payload.objectID !== story.objectID);
+      return { ...state, data: state.data.filter((story) => action.payload.objectID !== story.objectID) };
     default:
       throw new Error();
   }
@@ -62,23 +64,22 @@ const storiesReducer = (state, action) => {
 const App = () => {
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
-  const [stories, dispatchStories] = useReducer(storiesReducer, []);
-  const [isLoading, setIsLoading] = useState(null);
-  const [errorOccurred, setErrorOccurred] = useState(false);
+  const [stories, dispatchStories] = useReducer(storiesReducer, {
+    data: [], isLoading: false, errorOccurred: false
+  });
 
   useEffect(() => {
-    setIsLoading(true);
+    dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
     getAsyncStories().then((result) => {
       dispatchStories({
-        type: 'SET_STORIES', 
+        type: 'STORIES_FETCH_SUCCESS', 
         payload: result.data.stories
       });
-      setIsLoading(false);
-    }).catch(() => {
-      setErrorOccurred(true);
-    });
-
+    })
+    .catch(() => 
+      dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
+    );
   }, []);
 
   useEffect(() => {
@@ -89,7 +90,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  const storiesMatchingSearchTerm = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  const storiesMatchingSearchTerm = stories.data.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
   
   const handleRemoveStory = (story) => {
     dispatchStories({
@@ -107,16 +108,24 @@ const App = () => {
     </InputWithLabel>
     <hr />
 
-    {errorOccurred && <p>ERROR: AN ERROR OCCURRED.</p>}
+    {stories.errorOccurred && 
+      <p>ERROR: AN ERROR OCCURRED.</p>
+    }
 
-    {isLoading ? (
+    {!stories.errorOccurred && stories.isLoading &&
       <p>NOW LOADING STORIES. PLEASE STAND BY...</p>
-    ) : (
-      <>
-        Some titles are: 
+    }
+
+    {!stories.errorOccurred && !stories.isLoading && storiesMatchingSearchTerm.length <= 0 &&
+      <p>NO MATCHING STORIES.</p>
+    }
+
+    {!stories.errorOccurred && !stories.isLoading && storiesMatchingSearchTerm.length > 0 &&
+      <div>
+      Some titles are: 
         <List list={storiesMatchingSearchTerm} onRemoveItem={handleRemoveStory} />
-      </>
-    )}
+      </div>
+    }
   </div>
   );
 };
