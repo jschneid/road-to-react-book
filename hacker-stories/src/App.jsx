@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
@@ -15,48 +15,59 @@ const useStorageState = (key, initialState) => {
   return [value, setValue];
 };
 
+const initialStories = [
+  {
+    title: 'React', 
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0
+  },
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 5,
+    objectID: 1
+  },
+  {
+    title: 'Aggro Magnet Games',
+    url: 'https://aggromagnetgames.com/',
+    author: 'Jon Schneider',
+    num_comments: 0,
+    points: 0,
+    objectID: 2
+  }
+];
+
+const getAsyncStories = () => {
+  return new Promise((resolve) => setTimeout(() => resolve({ data: { stories: initialStories } }), 1500));
+};
+
+const storiesReducer = (state, action) => { 
+  if (action.type === 'SET_STORIES') {
+    return action.payload; 
+  }
+  throw new Error();
+}
+
 const App = () => {
-  const initialStories = [
-    {
-      title: 'React', 
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      num_comments: 3,
-      points: 4,
-      objectID: 0
-    },
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      num_comments: 2,
-      points: 5,
-      objectID: 1
-    },
-    {
-      title: 'Aggro Magnet Games',
-      url: 'https://aggromagnetgames.com/',
-      author: 'Jon Schneider',
-      num_comments: 0,
-      points: 0,
-      objectID: 2
-    }
-  ];
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
-  const [stories, setStories] = useState([]);
+  const [stories, dispatchStories] = useReducer(storiesReducer, []);
   const [isLoading, setIsLoading] = useState(null);
   const [errorOccurred, setErrorOccurred] = useState(false);
-
-  const getAsyncStories = () => {
-    return new Promise((resolve) => setTimeout(() => resolve({ data: { stories: initialStories } }), 1500));
-  };
 
   useEffect(() => {
     setIsLoading(true);
 
     getAsyncStories().then((result) => {
-      setStories(result.data.stories);
+      dispatchStories({
+        type: 'SET_STORIES', 
+        payload: result.data.stories
+      });
       setIsLoading(false);
     }).catch(() => {
       setErrorOccurred(true);
@@ -76,8 +87,11 @@ const App = () => {
   
   const handleRemoveStory = (item) => {
     const updatedStoriesList = stories.filter((story) => item.objectID !== story.objectID);
-    setStories(updatedStoriesList);
-  }
+    dispatchStories({
+      type: 'SET_STORIES',
+      payload: updatedStoriesList
+    });
+  };
 
   return (
   <div>
