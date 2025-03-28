@@ -49,6 +49,8 @@ const getAsyncStories = () => {
 const storiesReducer = (state, action) => { 
   if (action.type === 'SET_STORIES') {
     return action.payload; 
+  } else if (action.type === 'REMOVE_STORY') {
+    return state.filter((story) => action.payload.objectID !== story.objectID);
   }
   throw new Error();
 }
@@ -85,11 +87,10 @@ const App = () => {
 
   const storiesMatchingSearchTerm = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
   
-  const handleRemoveStory = (item) => {
-    const updatedStoriesList = stories.filter((story) => item.objectID !== story.objectID);
+  const handleRemoveStory = (story) => {
     dispatchStories({
-      type: 'SET_STORIES',
-      payload: updatedStoriesList
+      type: 'REMOVE_STORY',
+      payload: story
     });
   };
 
