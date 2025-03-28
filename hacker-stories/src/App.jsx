@@ -38,10 +38,18 @@ const App = () => {
     data: [], isLoading: false, errorOccurred: false
   });
 
-  useEffect(() => {
+  const fetchStories = () => {
+    if (searchTerm.length < 3) {
+      dispatchStories({
+        type: 'STORIES_FETCH_SUCCESS', 
+        payload: []
+      });
+      return;
+    }
+
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    fetch(`${API_ENDPOINT}react`)
+    fetch(`${API_ENDPOINT}${searchTerm}`)
     .then((response) => response.json())
     .then((result) => {
       dispatchStories({
@@ -52,17 +60,16 @@ const App = () => {
     .catch(() => 
       dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
     );
-  }, []);
+  };
 
   useEffect(() => {
     localStorage.setItem('search', searchTerm);
+    fetchStories();
   }, [searchTerm]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
-
-  const storiesMatchingSearchTerm = stories.data.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleRemoveStory = (story) => {
     dispatchStories({
@@ -88,14 +95,14 @@ const App = () => {
       <p>NOW LOADING STORIES. PLEASE STAND BY...</p>
     }
 
-    {!stories.errorOccurred && !stories.isLoading && storiesMatchingSearchTerm.length <= 0 &&
+    {!stories.errorOccurred && !stories.isLoading && stories.data.length <= 0 &&
       <p>NO MATCHING STORIES.</p>
     }
 
-    {!stories.errorOccurred && !stories.isLoading && storiesMatchingSearchTerm.length > 0 &&
+    {!stories.errorOccurred && !stories.isLoading && stories.data.length > 0 &&
       <div>
       Some titles are: 
-        <List list={storiesMatchingSearchTerm} onRemoveItem={handleRemoveStory} />
+        <List list={stories.data} onRemoveItem={handleRemoveStory} />
       </div>
     }
   </div>
