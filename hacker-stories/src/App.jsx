@@ -42,9 +42,11 @@ const initialStories = [
   }
 ];
 
-const getAsyncStories = () => {
-  return new Promise((resolve) => setTimeout(() => resolve({ data: { stories: initialStories } }), 1500));
-};
+const getAsyncStories = () => 
+  new Promise((resolve, reject) => setTimeout(reject, 2000));
+// {
+//  return new Promise((resolve) => setTimeout(() => resolve({ data: { stories: initialStories } }), 1500));
+// };
 
 const storiesReducer = (state, action) => { 
   switch(action.type) {
